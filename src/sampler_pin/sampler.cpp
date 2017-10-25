@@ -13,7 +13,7 @@ typedef UINT32 CACHE_STATS; // type of cache hit/miss counters
 using namespace std;
 
 KNOB<string> KnobOutput(KNOB_MODE_WRITEONCE, "pintool", "o", "SampledTrace", "Output file of trace");
-KNOB<UINT64> KnobSample(KNOB_MODE_WRITEONCE, "pintool", "sample", "4000000000", "Number of references sampled(1 billion by default)"); 
+KNOB<UINT64> KnobSample(KNOB_MODE_WRITEONCE, "pintool", "sample", "1000000000", "Number of references sampled(1 billion by default)"); 
 KNOB<UINT64> KnobSkip(KNOB_MODE_WRITEONCE, "pintool", "skip", "8192", "reference skipped");
 KNOB<INT32> KnobLRUSize(KNOB_MODE_WRITEONCE, "pintool", "lru", "8192", "LRU stack size");
 
@@ -33,10 +33,11 @@ LOCALFUN VOID MemRef(ADDRINT addr, UINT32 size, CACHE_BASE::ACCESS_TYPE accessTy
     if(lru->access(addr>>6))
         return;
     instcount++;
-    traceout.write((char*)&addr, sizeof(addr));
+    //traceout.write((char*)&addr, sizeof(addr));
 }
 
 LOCALFUN VOID Instruction(INS ins, VOID *v){
+    
     if(INS_IsStandardMemop(ins) && (INS_IsMemoryRead(ins) || INS_IsMemoryWrite(ins))){
         INS_InsertCall(ins, IPOINT_BEFORE, (AFUNPTR)MemRef,
                 INS_IsMemoryRead(ins)?IARG_MEMORYREAD_EA : IARG_MEMORYWRITE_EA,
@@ -46,8 +47,10 @@ LOCALFUN VOID Instruction(INS ins, VOID *v){
     }
 }
 
+
 LOCALFUN VOID Fini(int code, VOID * v){
-    cout << "Finish Sample" << endl;
+    cout << "Finish Sampling" << endl;
+    cout << "Instruction Count : " << instcount << endl;
     traceout.write((char*)&instcount, sizeof(instcount));
     skipped = KnobSkip.Value();
     traceout.write((char*)&skipped, sizeof(skipped));
@@ -55,20 +58,19 @@ LOCALFUN VOID Fini(int code, VOID * v){
 }
 
 LOCALFUN VOID Init(){
-    cout << "BEGIN TO SAMPLE" << endl;
     sinst = KnobSample.Value();
     skipped = KnobSkip.Value();
     lru = new LRUStack(KnobLRUSize.Value());
     traceout.open(KnobOutput.Value().c_str(), ofstream::out);
     assert(traceout.good());
+    cout << "BEGIN TO SAMPLE" << endl;
 }
 
 GLOBALFUN int main(int argc, char *argv[])
 {
-    PIN_InitSymbols();
+    //PIN_InitSymbols();
     PIN_Init(argc, argv);
     Init();
-    //IMG_AddInstrumentFunction(Image, 0);
     INS_AddInstrumentFunction(Instruction, 0);
     PIN_AddFiniFunction(Fini, 0);
 

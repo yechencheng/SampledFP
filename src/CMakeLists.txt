@@ -7,3 +7,4 @@ add_definitions(-DCMAKE_PERF_DIR="${CMAKE_PERF_DIR}/")
 
 add_subdirectory(test)
 add_subdirectory(lru)
+add_subdirectory(sampler_pin)
