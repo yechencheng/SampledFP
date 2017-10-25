@@ -68,7 +68,7 @@ LOCALFUN VOID Init(){
 
 GLOBALFUN int main(int argc, char *argv[])
 {
-    //PIN_InitSymbols();
+    PIN_InitSymbols();
     PIN_Init(argc, argv);
     Init();
     INS_AddInstrumentFunction(Instruction, 0);
