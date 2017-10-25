@@ -64,6 +64,8 @@ LOCALFUN VOID Init(){
     traceout.open(KnobOutput.Value().c_str(), ofstream::out);
     assert(traceout.good());
     cout << "BEGIN TO SAMPLE" << endl;
+    cout << "Maximal Inst : " << sinst << endl;
+    cout << "LRU Size : " << KnobLRUSize.Value() << endl;
 }
 
 GLOBALFUN int main(int argc, char *argv[])
