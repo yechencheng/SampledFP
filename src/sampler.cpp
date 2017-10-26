@@ -1,22 +1,24 @@
 #include "sampler.h"
 
 #include <fstream>
-#include <assert>
+#include <cassert>
 
 using namespace std;
 
 Sampler::Sampler(string fname){
     fin.open(fname, ifstream::binary);
     assert(fin.good());
+    pos = 0;
 }
 
 UniformSampler::UniformSampler(string fname, int _strip) : Sampler(fname){
     strip = _strip;
 }
 
-bool UniformSampler::next(AddrInt &rt){
-    AddrInt a[strip];
-    fin.read((char*)a, strip*sizeof(AddrInt));
-    rt = a[strip-1];
-    return fin.good();
+int64_t UniformSampler::next(AddrInt &rt){
+    fin.read((char*)&rt, sizeof(AddrInt));
+    fin.ignore((strip-1)*sizeof(AddrInt));
+    if(!fin.good()) return -1;
+    pos += strip;
+    return pos-1;
 }

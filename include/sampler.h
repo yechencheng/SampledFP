@@ -6,19 +6,20 @@
 using namespace std;
 
 class Sampler{
-private:
+protected:
     ifstream fin;
+    int64_t pos; //sampler position
 public:
     Sampler(string fname);
-    bool next(AddrInt &x)=0; // return true if not hit the end of the trace
+    virtual int64_t next(AddrInt &x)=0; // return position of sampled address, -1 if trace is ended
 };
 
 class UniformSampler : public Sampler{
 private:
     int strip;
 public:
-    UniformSampler(string fname);
-    bool next(AddrInt &x);
+    UniformSampler(string fname, int _strip);
+    int64_t next(AddrInt &x);
 };
 
 /*
