@@ -17,6 +17,6 @@ UniformSampler::UniformSampler(string fname, int _strip) : Sampler(fname){
 bool UniformSampler::next(AddrInt &rt){
     AddrInt a[strip];
     fin.read((char*)a, strip*sizeof(AddrInt));
-    rt = a[0];
+    rt = a[strip-1];
     return fin.good();
 }
