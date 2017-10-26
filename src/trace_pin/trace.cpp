@@ -33,7 +33,7 @@ LOCALFUN VOID MemRef(ADDRINT addr, UINT32 size, CACHE_BASE::ACCESS_TYPE accessTy
     if(lru->access(addr>>6))
         return;
     instcount++;
-    //traceout.write((char*)&addr, sizeof(addr));
+    traceout.write((char*)&addr, sizeof(addr));
 }
 
 LOCALFUN VOID Instruction(INS ins, VOID *v){
@@ -70,7 +70,7 @@ LOCALFUN VOID Init(){
 
 GLOBALFUN int main(int argc, char *argv[])
 {
-    PIN_InitSymbols();
+    //PIN_InitSymbols();
     PIN_Init(argc, argv);
     Init();
     INS_AddInstrumentFunction(Instruction, 0);
