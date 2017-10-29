@@ -11,6 +11,12 @@ if (APPLE)
     set(CMAKE_MACOSX_RPATH ON)
 endif(APPLE)
 
+find_package(boost)
+if(Boost_FOUND)
+    include_directories(${Boost_INCLUDE_DIRS})
+    link_directories(${Boost_LIBRARY_DIRS})
+endif(Boost_FOUND)
+
 set(CMAKE_C_FLAGS "-g -O3")
 set(CMAKE_CXX_FLAGS "${CMAKE_C_FLAGS} --std=c++11")
 

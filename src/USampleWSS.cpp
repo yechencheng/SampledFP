@@ -4,10 +4,14 @@
 #include <cstdlib>
 #include <queue>
 
+#include <boost/program_options.hpp>
+
 #include "sampler.h"
 #include "type.h"
 
 using namespace std;
+using namespace boost::program_options;
+
 typedef pair<AddrInt, int64_t> Access;
 unordered_map<AddrInt, int64_t> prev_pos;
 
@@ -15,8 +19,13 @@ int wss = 0; //wss of the queue
 int64_t current_pos = 0;
 queue<Access> q;
 
+ofstream fout;
 void output_ws(int64_t wss, int64_t num=1){
-    cout << wss << " " << num << endl;
+    if(num == 1) wss = -wss;
+    fout.write((char*)&wss, sizeof(wss));
+    if(num != 1)
+        fout.write((char*)&num, sizeof(wss));
+    //cout << wss << " " << num << endl;
 }
 
 void update_wss(AddrInt addr, int64_t pos, int ws){
@@ -69,15 +78,28 @@ void update_wss(AddrInt addr, int64_t pos, int ws){
 }
 
 int main(int argc, char** argv){
-    if(argc < 4){
-        cerr << "usage : command trace_file window_length strip" << endl;
+
+    int ws, strip;
+    string fname;
+    string outfile = "output";
+
+    options_description desc{"Options"};
+    desc.add_options()
+        ("help,h", "This message")
+        ("input,i", value<string>(&fname)->required(), "input trace file")
+        ("ws,w", value<int>(&ws)->required(), "window size")
+        ("strip,s", value<int>(&strip)->required(), "strip of sampling")
+        ("output,o", value<string>(&outfile), "output file")
+    ;
+    variables_map vm;
+    store(parse_command_line(argc, argv, desc), vm);
+    if(vm.count("help")){
+        cerr << desc << endl;
         return 1;
     }
-
-    string fname = string(argv[1]);
-    int ws = atoi(argv[2]);
-    int strip = atoi(argv[3]);
-
+    notify(vm);
+    
+    fout.open(outfile, ofstream::binary | ofstream::out);
     UniformSampler usamp(fname, strip);
     AddrInt addr;
 
@@ -85,5 +107,7 @@ int main(int argc, char** argv){
     while((pos = usamp.next(addr)) != -1){
         update_wss(addr, pos, ws);
     }
+
+    fout.close();
     return 0;
 }

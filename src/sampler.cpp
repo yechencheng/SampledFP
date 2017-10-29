@@ -19,6 +19,6 @@ int64_t UniformSampler::next(AddrInt &rt){
     fin.read((char*)&rt, sizeof(AddrInt));
     fin.ignore((strip-1)*sizeof(AddrInt));
     if(!fin.good()) return -1;
-    pos += strip;
+    pos += strip+1;
     return pos-1;
 }
