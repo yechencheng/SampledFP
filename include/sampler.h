@@ -1,5 +1,6 @@
 #include <fstream>
 #include <string>
+#include <random>
 
 #include "type.h"
 
@@ -11,6 +12,7 @@ protected:
     int64_t pos; //sampler position
 public:
     Sampler(string fname);
+    ~Sampler();
     virtual int64_t next(AddrInt &x)=0; // return position of sampled address, -1 if trace is ended
 };
 
@@ -22,12 +24,15 @@ public:
     int64_t next(AddrInt &x);
 };
 
-/*
+
 class SimpleRandomSampler : public Sampler{
 private:
+    double spr; // sampling rate
+    random_device rd;
+    mt19937 gen;
+    uniform_real_distribution<> dis;
 
 public:
-    SimpleRandomSampler(string fname);
-    bool next(AddrInt &x);
-}
-*/
+    SimpleRandomSampler(string fname, double _spr);
+    int64_t next(AddrInt &x);
+};

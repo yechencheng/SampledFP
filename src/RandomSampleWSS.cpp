@@ -15,7 +15,8 @@ using namespace boost::program_options;
 
 int main(int argc, char** argv){
 
-    int ws, strip;
+    int ws;
+    double spr;
     string fname;
     string outfile = "output";
 
@@ -24,7 +25,7 @@ int main(int argc, char** argv){
         ("help,h", "This message")
         ("input,i", value<string>(&fname)->required(), "input trace file")
         ("ws,w", value<int>(&ws)->required(), "window size")
-        ("strip,s", value<int>(&strip)->required(), "strip of sampling")
+        ("spr,s", value<double>(&spr)->required(), "sampling ratio")
         ("output,o", value<string>(&outfile), "output file")
     ;
     variables_map vm;
@@ -37,11 +38,11 @@ int main(int argc, char** argv){
     
     WSSCalculator wssc(ws, outfile);
     //fout.open(outfile, ofstream::binary | ofstream::out);
-    UniformSampler usamp(fname, strip);
+    SimpleRandomSampler rsamp(fname, spr);
     AddrInt addr;
 
     int64_t pos;
-    while((pos = usamp.next(addr)) != -1){
+    while((pos = rsamp.next(addr)) != -1){
         wssc.update_wss(addr, pos);
     }
 

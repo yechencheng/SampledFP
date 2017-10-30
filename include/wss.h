@@ -4,35 +4,41 @@
 #include <cstdint>
 #include <cstdlib>
 #include <queue>
+#include <string>
+#include <fstream>
 
 #include "type.h"
+
+using namespace std;
 
 class WSSCalculator{
 private:
     typedef pair<AddrInt, int64_t> Access;
     unordered_map<AddrInt, int64_t> prev_pos;
     
+    int ws; //window size
     int wss; //wss of the queue
     int64_t current_pos;
     queue<Access> q;
     ofstream fout;
 public:
-    WSSCalculator(string fname){
+    WSSCalculator(int _ws, string fname){
+        ws = _ws;
         wss = 0;
         current_pos = 0;
-        fout.open(outfile, ofstream::binary | ofstream::out);
+        fout.open(fname, ofstream::binary | ofstream::out);
     }
 
-    ~WSSCalculator{
+    ~WSSCalculator(){
         fout.close();
     }
 
     void output_ws(int64_t wss, int64_t num=1){
-        if(num == 1) wss = -wss;
         fout.write((char*)&wss, sizeof(wss));
-        if(num != 1)
-            fout.write((char*)&num, sizeof(wss));
+        fout.write((char*)&num, sizeof(wss));
         //cout << wss << " " << num << endl;
+        //while(num--)
+        //    cout << wss << " ";
     }
     
     void output_ws_nsampled(int64_t wss, int64_t num = 1, int nsampled = 1){
@@ -41,7 +47,7 @@ public:
         fout.write((char*)&nsampled, sizeof(nsampled));
     }
 
-    void update_wss(AddrInt addr, int64_t pos, int ws){
+    void update_wss(AddrInt addr, int64_t pos){
         int64_t len = pos-current_pos+1;
         if(len < ws){
             if(prev_pos.find(addr) == prev_pos.end())
