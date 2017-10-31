@@ -19,7 +19,7 @@ int main(){
         cmp.write(b++);
         cmp.write(a++);
     }
-    cmp.finish();
+    cmp.close();
 
     Decompressor dcmp("cmp_test", buff_size);
     for(int i = 0; i < 100; i++){
@@ -30,7 +30,7 @@ int main(){
         dcmp.read(a);
         assert(a == i*2+1);
     }
-    dcmp.finish();
+    dcmp.close();
 
     return 0;
 }

@@ -8,6 +8,7 @@
 #include <fstream>
 
 #include "type.h"
+#include "compressor.h"
 
 using namespace std;
 
@@ -20,32 +21,33 @@ private:
     int wss; //wss of the queue
     int64_t current_pos;
     queue<Access> q;
-    ofstream fout;
+    
+    Compressor *cmp;
 public:
     WSSCalculator(int _ws, string fname){
         ws = _ws;
         wss = 0;
         current_pos = 0;
-        fout.open(fname, ofstream::binary | ofstream::out);
-        fout.write((char*)&ws, sizeof(ws));
+        cmp = new Compressor(fname);
+        cmp->write(ws);
     }
 
     ~WSSCalculator(){
-        fout.close();
+        cmp->close();
     }
 
     void output_ws(int wss, int64_t num=1){
-        fout.write((char*)&wss, sizeof(wss));
-        fout.write((char*)&num, sizeof(wss));
+        cmp->write(wss);
+        cmp->write(num);
         //cout << wss << " " << num << endl;
         //while(num--)
         //    cout << wss << " ";
     }
     
     void output_ws_nsampled(int wss, int64_t num = 1, int nsampled = 1){
-        fout.write((char*)&wss, sizeof(wss));
-        fout.write((char*)&num, sizeof(num));
-        fout.write((char*)&nsampled, sizeof(nsampled));
+        cmp->write(wss);
+        cmp->write(num);
+        cmp->write(nsampled);
     }
 
     void update_wss(AddrInt addr, int64_t pos){

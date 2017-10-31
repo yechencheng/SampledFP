@@ -5,6 +5,7 @@
 
 using namespace std;
 
+static const int default_buff_size = 4<<20;
 class Compressor{
 private:
     ofstream fout;
@@ -15,10 +16,10 @@ private:
     int current_pos;
     bool clear_buffer();
 public:
-    Compressor(string outfile, int _buff_size=(1<<20));
+    Compressor(string outfile, int _buff_size=default_buff_size);
 
     template<typename T> bool write(T a);
-    void finish();
+    void close();
     ~Compressor();
 };
 
@@ -33,10 +34,10 @@ private:
     int current_pos;
     bool fill_buffer();
 public:
-    Decompressor(string infile, int _buff_size=(1<<20));
+    Decompressor(string infile, int _buff_size=default_buff_size);
 
     template<typename T> bool read(T &a);
-    void finish();
+    void close();
     ~Decompressor();
 };
 

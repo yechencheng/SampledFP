@@ -4,6 +4,7 @@
 #include <boost/program_options.hpp>
 
 #include "statistic.h"
+#include "compressor.h"
 
 using namespace std;
 using namespace boost::program_options;
@@ -26,24 +27,24 @@ int main(int argc, char** argv){
     }
     notify(vm);
 
-    ifstream fin(fname);
+    Decompressor dcmp(fname);
 
     int ws;
-    fin.read((char*)&ws, sizeof(ws));
+    dcmp.read(ws);
     CountWindow cw(ws);
 
     int wss;
     int64_t num;
     int nsampled;
-    while(fin.read((char*)&wss, sizeof(wss))){
-        fin.read((char*)&num, sizeof(num));
-        fin.read((char*)&nsampled, sizeof(nsampled));
+    while(dcmp.read(wss)){
+        dcmp.read(num);
+        dcmp.read(nsampled);
         cw.update(wss, num, nsampled);
     }
     cout << cw.cnt.size() << endl;
     if(nsample != -1)
         cout << cw.cnt[nsample].first << "\t" << cw.cnt[nsample].second << endl;
-    return 0;
+    //return 0;
     for(auto &i : cw.cnt){
         cout << i.first << "\t" << i.second.first << "\t" << i.second.second << endl;
     }

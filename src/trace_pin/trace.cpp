@@ -9,6 +9,7 @@ typedef UINT32 CACHE_STATS; // type of cache hit/miss counters
 #include "pin_cache.H"
 
 #include "lru.h"
+#include "compressor.h"
 
 using namespace std;
 
@@ -22,6 +23,7 @@ UINT64 skipped = 0;
 UINT64 instcount = 0;
 ofstream traceout;
 LRUStack *lru;
+Compressor *cmp;
 
 LOCALFUN VOID MemRef(ADDRINT addr, UINT32 size, CACHE_BASE::ACCESS_TYPE accessType){
     if(skipped){
@@ -33,7 +35,8 @@ LOCALFUN VOID MemRef(ADDRINT addr, UINT32 size, CACHE_BASE::ACCESS_TYPE accessTy
     if(lru->access(addr>>6))
         return;
     instcount++;
-    traceout.write((char*)&addr, sizeof(addr));
+    //traceout.write((char*)&addr, sizeof(addr));
+    cmp->write(addr);
 }
 
 LOCALFUN VOID Instruction(INS ins, VOID *v){
@@ -51,18 +54,20 @@ LOCALFUN VOID Instruction(INS ins, VOID *v){
 LOCALFUN VOID Fini(int code, VOID * v){
     cout << "Finish Sampling" << endl;
     cout << "Instruction Count : " << instcount << endl;
-    traceout.write((char*)&instcount, sizeof(instcount));
-    skipped = KnobSkip.Value();
-    traceout.write((char*)&skipped, sizeof(skipped));
-    traceout.close();
+    //traceout.write((char*)&instcount, sizeof(instcount));
+    //skipped = KnobSkip.Value();
+    //traceout.write((char*)&skipped, sizeof(skipped));
+    //traceout.close();
+    cmp->close();
 }
 
 LOCALFUN VOID Init(){
     sinst = KnobSample.Value();
     skipped = KnobSkip.Value();
     lru = new LRUStack(KnobLRUSize.Value());
-    traceout.open(KnobOutput.Value().c_str(), ofstream::out);
-    assert(traceout.good());
+    cmp = new Compressor(KnobOutput.Value().c_str());
+    //traceout.open(KnobOutput.Value().c_str(), ofstream::out);
+    ///assert(traceout.good());
     cout << "BEGIN TO SAMPLE" << endl;
     cout << "Maximal Inst : " << sinst << endl;
     cout << "LRU Size : " << KnobLRUSize.Value() << endl;

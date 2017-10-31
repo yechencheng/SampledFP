@@ -17,8 +17,6 @@ Compressor::Compressor(string outfile, int _buff_size) : buff_size(_buff_size){
     cmp = new char[buff_size*2];
 }
 
-
-
 bool Compressor::clear_buffer(){
     const int max_dst_size = LZ4_compressBound(current_pos);
     const int cmp_data_size = LZ4_compress_default(buff, cmp, current_pos, max_dst_size);
@@ -29,7 +27,7 @@ bool Compressor::clear_buffer(){
     return true;
 }
 
-void Compressor::finish(){
+void Compressor::close(){
     if(!fout.good()) return;
     if(current_pos > 0)
         clear_buffer();
@@ -37,7 +35,7 @@ void Compressor::finish(){
 }
 
 Compressor::~Compressor(){
-    finish();
+    close();
     delete buff;
     delete cmp;
 }
@@ -54,13 +52,12 @@ Decompressor::Decompressor(string infile, int _buff_size) : buff_size(_buff_size
 
 
 bool Decompressor::fill_buffer(){
-    if(!fin.good()){
-        assert(current_pos == data_size);
-        return false;
-    }
     memcpy(buff, buff+current_pos, data_size-current_pos);
     current_pos = data_size-current_pos;
-    fin.read((char*)&data_size, sizeof(data_size));
+    if(!fin.read((char*)&data_size, sizeof(data_size))){
+        assert(current_pos == 0);
+        return false;
+    }
     fin.read(dcmp, data_size);
     data_size = LZ4_decompress_safe(dcmp, buff+current_pos, data_size, buff_size);
     assert(data_size > 0);
@@ -69,12 +66,12 @@ bool Decompressor::fill_buffer(){
     return true;
 }
 
-void Decompressor::finish(){
+void Decompressor::close(){
     if(!fin.good()) return;
     fin.close();
 }
 
 Decompressor::~Decompressor(){
-    finish();
+    close();
     delete buff;
 }
