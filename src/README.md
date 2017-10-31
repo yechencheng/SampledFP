@@ -7,4 +7,8 @@
 
 ## Output Formation of Sampled Working Set Size
 
-The output file is a sequence of WSS of continous windows. The sequence is composed of pairs *(wss, num)*, meaning there are *num* continous windows, which their working set size is *wss*.
+The output file is a sequence of WSS of continous windows. The sequence is composed of pairs *(wss, num, nsampled)*, meaning there are *num* continous windows, which their working set size are *wss* and excatly *nsampled* accesses are sampled in each window.
+
+## TODO
+
+Change the type of variable *ws* in *USamplerWSS.cpp* to **int64_t**

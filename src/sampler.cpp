@@ -19,9 +19,9 @@ UniformSampler::UniformSampler(string fname, int _strip) : Sampler(fname){
 }
 
 int64_t UniformSampler::next(AddrInt &rt){
+    if(!fin.good()) return -1;
     fin.read((char*)&rt, sizeof(AddrInt));
     fin.ignore((strip-1)*sizeof(AddrInt));
-    if(!fin.good()) return -1;
     pos += strip;
     return pos-strip;
 }
@@ -33,13 +33,14 @@ SimpleRandomSampler::SimpleRandomSampler(string fname, double _spr) : Sampler(fn
 }
 
 int64_t SimpleRandomSampler::next(AddrInt &rt){
+    if(!fin.good()) return -1;
+
     int n = 0;
     while(dis(gen) > spr)
         n++;
 
     fin.read((char*)&rt, sizeof(AddrInt));
     fin.ignore(n*sizeof(AddrInt));
-    if(!fin.good()) return -1;
     pos += n+1;
     return pos-n-1;
 }

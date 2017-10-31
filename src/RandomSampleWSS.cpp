@@ -37,7 +37,6 @@ int main(int argc, char** argv){
     notify(vm);
     
     WSSCalculator wssc(ws, outfile);
-    //fout.open(outfile, ofstream::binary | ofstream::out);
     SimpleRandomSampler rsamp(fname, spr);
     AddrInt addr;
 

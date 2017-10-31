@@ -1,0 +1,2 @@
+add_executable(histWSS histWSS.cpp)
+target_link_libraries(histWSS LINK_PUBLIC boost_program_options)

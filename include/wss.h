@@ -27,13 +27,14 @@ public:
         wss = 0;
         current_pos = 0;
         fout.open(fname, ofstream::binary | ofstream::out);
+        fout.write((char*)&ws, sizeof(ws));
     }
 
     ~WSSCalculator(){
         fout.close();
     }
 
-    void output_ws(int64_t wss, int64_t num=1){
+    void output_ws(int wss, int64_t num=1){
         fout.write((char*)&wss, sizeof(wss));
         fout.write((char*)&num, sizeof(wss));
         //cout << wss << " " << num << endl;
@@ -41,7 +42,7 @@ public:
         //    cout << wss << " ";
     }
     
-    void output_ws_nsampled(int64_t wss, int64_t num = 1, int nsampled = 1){
+    void output_ws_nsampled(int wss, int64_t num = 1, int nsampled = 1){
         fout.write((char*)&wss, sizeof(wss));
         fout.write((char*)&num, sizeof(num));
         fout.write((char*)&nsampled, sizeof(nsampled));
