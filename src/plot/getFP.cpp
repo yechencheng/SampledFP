@@ -8,15 +8,14 @@
 using namespace std;
 using namespace boost::program_options;
 
+
 int main(int argc, char** argv){
     string fname;
-    int64_t nsample = -1;
-
+    
     options_description desc{"Options"};
     desc.add_options()
         ("help,h", "This message")
         ("input,i", value<string>(&fname)->required(), "input trace file")
-        ("nsample,n", value<int64_t>(&nsample), "number of sampled")
     ;
     variables_map vm;
     store(parse_command_line(argc, argv, desc), vm);
@@ -30,22 +29,17 @@ int main(int argc, char** argv){
 
     int ws;
     fin.read((char*)&ws, sizeof(ws));
-    CountWindow cw(ws);
-
+    cout << "WS : " << ws << endl;
+    Footprint fp(ws);
     int wss;
     int64_t num;
     int nsampled;
     while(fin.read((char*)&wss, sizeof(wss))){
         fin.read((char*)&num, sizeof(num));
         fin.read((char*)&nsampled, sizeof(nsampled));
-        cw.update(wss, num, nsampled);
+        fp.update(wss, num, nsampled);
+        assert(nsampled == ws);
     }
-    cout << cw.cnt.size() << endl;
-    if(nsample != -1)
-        cout << cw.cnt[nsample].first << "\t" << cw.cnt[nsample].second << endl;
-    return 0;
-    for(auto &i : cw.cnt){
-        cout << i.first << "\t" << i.second.first << "\t" << i.second.second << endl;
-    }
+    cout << fp.sum << " " << fp.nw << endl;
     return 0;
 }

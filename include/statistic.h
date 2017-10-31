@@ -59,3 +59,17 @@ public:
         }
     }
 };
+
+class Footprint : public AbstractStat{
+public:
+    int64_t sum;
+    int64_t nw;
+    Footprint(int _ws) : AbstractStat(_ws){
+        sum = 0;
+        nw = 0;
+    }
+    void update(int wss, int64_t num, int nsampled){
+        sum += wss*num;
+        nw += num;
+    }
+};

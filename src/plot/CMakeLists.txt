@@ -1,2 +1,4 @@
 add_executable(histWSS histWSS.cpp)
+add_executable(getFP getFP.cpp)
 target_link_libraries(histWSS LINK_PUBLIC boost_program_options)
+target_link_libraries(getFP LINK_PUBLIC boost_program_options)

@@ -17,6 +17,11 @@ if(Boost_FOUND)
     link_directories(${Boost_LIBRARY_DIRS})
 endif(Boost_FOUND)
 
+find_library(LZ4_LIB lz4)
+if(NOT LZ4_LIB)
+    message(FATAL_ERROR "lz4 library not found")
+endif()
+
 set(CMAKE_C_FLAGS "-g -O3")
 set(CMAKE_CXX_FLAGS "${CMAKE_C_FLAGS} --std=c++11")
 
