@@ -2,6 +2,7 @@
 #include <string>
 #include <cassert>
 #include <iostream>
+#include <cstring>
 
 #include "compressor.h"
 

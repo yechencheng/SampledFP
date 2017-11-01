@@ -28,7 +28,7 @@ public:
 
 template<typename T> 
 bool Compressor::write(T a){
-    if(current_pos + sizeof(a) >= buff_size)
+    if(current_pos + (int)sizeof(a) >= buff_size)
         clear_buffer();
     *(T*)(buff+current_pos) = a;
     current_pos += sizeof(a);
