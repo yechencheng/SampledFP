@@ -17,14 +17,14 @@ private:
     typedef pair<AddrInt, int64_t> Access;
     unordered_map<AddrInt, int64_t> prev_pos;
     
-    int ws; //window size
+    int64_t ws; //window size
     int wss; //wss of the queue
     int64_t current_pos;
     queue<Access> q;
     
     Compressor *cmp;
 public:
-    WSSCalculator(int _ws, string fname){
+    WSSCalculator(int64_t _ws, string fname){
         ws = _ws;
         wss = 0;
         current_pos = 0;

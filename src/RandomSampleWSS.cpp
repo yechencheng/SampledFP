@@ -15,7 +15,7 @@ using namespace boost::program_options;
 
 int main(int argc, char** argv){
 
-    int ws;
+    int64_t ws;
     double spr;
     string fname;
     string outfile = "output";
@@ -24,7 +24,7 @@ int main(int argc, char** argv){
     desc.add_options()
         ("help,h", "This message")
         ("input,i", value<string>(&fname)->required(), "input trace file")
-        ("ws,w", value<int>(&ws)->required(), "window size")
+        ("ws,w", value<int64_t>(&ws)->required(), "window size")
         ("spr,s", value<double>(&spr)->required(), "sampling ratio")
         ("output,o", value<string>(&outfile), "output file")
     ;
@@ -40,8 +40,10 @@ int main(int argc, char** argv){
     SimpleRandomSampler rsamp(fname, spr);
     AddrInt addr;
 
+    int64_t cnt = 0;
     int64_t pos;
     while((pos = rsamp.next(addr)) != -1){
+        if(cnt++ % 100000000 == 0) cout << cnt/100000000 << endl;
         wssc.update_wss(addr, pos);
     }
 

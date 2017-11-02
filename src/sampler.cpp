@@ -14,7 +14,7 @@ Sampler::~Sampler(){
     fin.close();
 }
 
-UniformSampler::UniformSampler(string fname, int _strip) : Sampler(fname){
+UniformSampler::UniformSampler(string fname, int64_t _strip) : Sampler(fname){
     strip = _strip;
 }
 

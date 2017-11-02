@@ -18,9 +18,9 @@ public:
 
 class UniformSampler : public Sampler{
 private:
-    int strip;
+    int64_t strip;
 public:
-    UniformSampler(string fname, int _strip);
+    UniformSampler(string fname, int64_t _strip);
     int64_t next(AddrInt &x);
 };
 

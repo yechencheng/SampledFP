@@ -4,6 +4,7 @@
 #include <boost/program_options.hpp>
 
 #include "statistic.h"
+#include "compressor.h"
 
 using namespace std;
 using namespace boost::program_options;
@@ -25,18 +26,18 @@ int main(int argc, char** argv){
     }
     notify(vm);
 
-    ifstream fin(fname);
+    Decompressor dcmp(fname);
 
-    int ws;
-    fin.read((char*)&ws, sizeof(ws));
+    int64_t ws;
+    dcmp.read(ws);
     cout << "WS : " << ws << endl;
     Footprint fp(ws);
     int wss;
     int64_t num;
     int nsampled;
-    while(fin.read((char*)&wss, sizeof(wss))){
-        fin.read((char*)&num, sizeof(num));
-        fin.read((char*)&nsampled, sizeof(nsampled));
+    while(dcmp.read(wss)){
+        dcmp.read(num);
+        dcmp.read(nsampled);
         fp.update(wss, num, nsampled);
         assert(nsampled == ws);
     }

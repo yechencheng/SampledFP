@@ -29,7 +29,7 @@ int main(int argc, char** argv){
 
     Decompressor dcmp(fname);
 
-    int ws;
+    int64_t ws;
     dcmp.read(ws);
     CountWindow cw(ws);
 

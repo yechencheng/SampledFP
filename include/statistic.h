@@ -10,15 +10,15 @@ using namespace std;
 class AbstractStat{
 public:
     int64_t *stat;
-    int ws;
-    AbstractStat(int _ws) : ws(_ws) {};
+    int64_t ws;
+    AbstractStat(int64_t _ws) : ws(_ws) {};
     virtual void update(int wss, int64_t num, int nsampled) = 0;
 };
 
 //Count windows precisely
 class SimpleStatistic : public AbstractStat{
 public:    
-    SimpleStatistic(int _ws) : AbstractStat(_ws) {
+    SimpleStatistic(int64_t _ws) : AbstractStat(_ws) {
         stat = new int64_t[ws+1];
         fill(stat, stat+ws, 0);
     }
@@ -32,7 +32,7 @@ public:
 //Count 100 windows
 class CoarseStatistic : public AbstractStat{
 public:
-    CoarseStatistic(int _ws) : AbstractStat(_ws) {
+    CoarseStatistic(int64_t _ws) : AbstractStat(_ws) {
         stat = new int64_t[101];
         fill(stat, stat+101, 0);        
     }
@@ -46,7 +46,7 @@ public:
 class CountWindow : public AbstractStat{
 public:
     map<int,pair<int64_t, int64_t>> cnt;
-    CountWindow(int _ws) : AbstractStat(_ws){
+    CountWindow(int64_t _ws) : AbstractStat(_ws){
     }
     
     void update(int wss, int64_t num, int nsampled){
@@ -64,7 +64,7 @@ class Footprint : public AbstractStat{
 public:
     int64_t sum;
     int64_t nw;
-    Footprint(int _ws) : AbstractStat(_ws){
+    Footprint(int64_t _ws) : AbstractStat(_ws){
         sum = 0;
         nw = 0;
     }

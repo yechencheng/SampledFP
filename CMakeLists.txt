@@ -11,7 +11,7 @@ if (APPLE)
     set(CMAKE_MACOSX_RPATH ON)
 endif(APPLE)
 
-find_package(boost)
+find_package(boost 1.64.0 REQUIRED)
 if(Boost_FOUND)
     include_directories(${Boost_INCLUDE_DIRS})
     link_directories(${Boost_LIBRARY_DIRS})
@@ -22,7 +22,7 @@ if(NOT LZ4_LIB)
     message(FATAL_ERROR "lz4 library not found")
 endif()
 
-set(CMAKE_C_FLAGS "-g -O3")
+set(CMAKE_C_FLAGS "-g -O3 -Wall")
 set(CMAKE_CXX_FLAGS "${CMAKE_C_FLAGS} --std=c++11")
 
 # PinTracer
