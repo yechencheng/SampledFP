@@ -11,7 +11,7 @@ if (APPLE)
     set(CMAKE_MACOSX_RPATH ON)
 endif(APPLE)
 
-find_package(boost 1.64.0 REQUIRED)
+find_package(Boost 1.64.0 REQUIRED)
 if(Boost_FOUND)
     include_directories(${Boost_INCLUDE_DIRS})
     link_directories(${Boost_LIBRARY_DIRS})
