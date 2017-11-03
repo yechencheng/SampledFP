@@ -5,7 +5,7 @@
 
 using namespace std;
 
-static const int default_buff_size = 512<<20;
+static const int default_buff_size = 256<<20;
 class Compressor{
 private:
     ofstream fout;
