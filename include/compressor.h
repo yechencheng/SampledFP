@@ -43,7 +43,7 @@ public:
 
 template<typename T> 
 bool Compressor::write(T a){
-    if(current_pos + sizeof(a) >= buff_size)
+    if(current_pos + int(sizeof(a)) >= buff_size)
         clear_buffer();
     *(T*)(buff+current_pos) = a;
     current_pos += sizeof(a);
@@ -52,7 +52,7 @@ bool Compressor::write(T a){
 
 template<typename T>
 bool Decompressor::read(T &a){
-    if(current_pos + sizeof(a) > data_size){
+    if(current_pos + int(sizeof(a)) > data_size){
         if(!fill_buffer())  //no more data
             return false;
     }
