@@ -43,7 +43,7 @@ LOCALFUN VOID MemRef(ADDRINT addr, UINT32 size, CACHE_BASE::ACCESS_TYPE accessTy
     //traceout.write((char*)&addr, sizeof(addr));
     cmp->write(addr);
     //visited[addr>>6]++;
-    cout << addr << endl;
+    //cout << addr << endl;
 }
 
 LOCALFUN VOID Instruction(INS ins, VOID *v){
