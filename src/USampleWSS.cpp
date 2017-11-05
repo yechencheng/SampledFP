@@ -1,5 +1,6 @@
 #include <iostream>
 #include <unordered_map>
+#include <unordered_set>
 #include <cstdint>
 #include <cstdlib>
 #include <queue>
@@ -34,15 +35,16 @@ int main(int argc, char** argv){
         return 1;
     }
     notify(vm);
-    
     WSSCalculator wssc(ws, outfile);
     UniformSampler usamp(fname, strip);
+    
     AddrInt addr;
-
     int64_t cnt = 0;
     int64_t pos;
+
     while((pos = usamp.next(addr)) != -1){
         if(cnt++ % 100000000 == 0) cout << cnt/100000000 << endl;
+        addr >>= 6;
         wssc.update_wss(addr, pos);
     }
 

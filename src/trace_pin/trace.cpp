@@ -5,6 +5,9 @@
 #include <iostream>
 #include <fstream>
 #include <assert.h>
+#include <unordered_set>
+#include <unordered_map>
+
 typedef UINT32 CACHE_STATS; // type of cache hit/miss counters
 #include "pin_cache.H"
 
@@ -25,6 +28,8 @@ ofstream traceout;
 LRUStack *lru;
 Compressor *cmp;
 
+map<ADDRINT, int> visited;
+
 LOCALFUN VOID MemRef(ADDRINT addr, UINT32 size, CACHE_BASE::ACCESS_TYPE accessType){
     if(skipped){
         --skipped;
@@ -37,6 +42,8 @@ LOCALFUN VOID MemRef(ADDRINT addr, UINT32 size, CACHE_BASE::ACCESS_TYPE accessTy
     instcount++;
     //traceout.write((char*)&addr, sizeof(addr));
     cmp->write(addr);
+    //visited[addr>>6]++;
+    cout << addr << endl;
 }
 
 LOCALFUN VOID Instruction(INS ins, VOID *v){
@@ -52,13 +59,14 @@ LOCALFUN VOID Instruction(INS ins, VOID *v){
 
 
 LOCALFUN VOID Fini(int code, VOID * v){
+    cmp->close();
     cout << "Finish Sampling" << endl;
     cout << "Instruction Count : " << instcount << endl;
     //traceout.write((char*)&instcount, sizeof(instcount));
     //skipped = KnobSkip.Value();
     //traceout.write((char*)&skipped, sizeof(skipped));
     //traceout.close();
-    cmp->close();
+    //cout << visited.size() << endl;
 }
 
 LOCALFUN VOID Init(){

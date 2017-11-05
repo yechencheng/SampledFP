@@ -43,6 +43,7 @@ int main(int argc, char** argv){
     int64_t cnt = 0;
     int64_t pos;
     while((pos = rsamp.next(addr)) != -1){
+        addr >>= 6;
         if(cnt++ % 100000000 == 0) cout << cnt/100000000 << endl;
         wssc.update_wss(addr, pos);
     }

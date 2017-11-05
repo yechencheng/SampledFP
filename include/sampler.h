@@ -3,12 +3,13 @@
 #include <random>
 
 #include "type.h"
+#include "compressor.h"
 
 using namespace std;
 
 class Sampler{
 protected:
-    ifstream fin;
+    Decompressor *dcmp;
     int64_t pos; //sampler position
 public:
     Sampler(string fname);
