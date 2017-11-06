@@ -44,7 +44,7 @@ int main(int argc, char** argv){
     int64_t pos;
     while((pos = rsamp.next(addr)) != -1){
         addr >>= 6;
-        if(cnt++ % 100000 == 0) cout << cnt/100000 << endl;
+        //if(cnt++ % 1000000 == 0) cout << cnt/1000000 << endl;
         wssc.update_wss(addr, pos);
     }
     wssc.close();
