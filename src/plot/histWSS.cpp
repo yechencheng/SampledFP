@@ -41,10 +41,10 @@ int main(int argc, char** argv){
         dcmp.read(nsampled);
         cw.update(wss, num, nsampled);
     }
-    cout << cw.cnt.size() << endl;
+    //cout << cw.cnt.size() << endl;
     if(nsample != -1)
         cout << cw.cnt[nsample].first << "\t" << cw.cnt[nsample].second << endl;
-    //return 0;
+    return 0;
     for(auto &i : cw.cnt){
         cout << i.first << "\t" << i.second.first << "\t" << i.second.second << endl;
     }
