@@ -47,6 +47,7 @@ int main(int argc, char** argv){
         addr >>= 6;
         wssc.update_wss(addr, pos);
     }
+    wssc.close();
 
     return 0;
 }

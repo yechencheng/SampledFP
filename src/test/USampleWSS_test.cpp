@@ -6,6 +6,7 @@
 
 #include "type.h"
 #include "wss.h"
+#include "compressor.h"
 
 using namespace std;
 

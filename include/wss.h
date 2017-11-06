@@ -32,8 +32,11 @@ public:
         cmp->write(ws);
     }
 
-    ~WSSCalculator(){
+    void close(){
         cmp->close();
+    }
+    ~WSSCalculator(){
+        close();
     }
 
     void output_ws(int wss, int64_t num=1){

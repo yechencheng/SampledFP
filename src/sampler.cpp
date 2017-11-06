@@ -34,11 +34,14 @@ SimpleRandomSampler::SimpleRandomSampler(string fname, double _spr) : Sampler(fn
     dis = uniform_real_distribution<>(0.0, 1.0);
 }
 
+#include <iostream>
+using namespace std;
+
 int64_t SimpleRandomSampler::next(AddrInt &rt){
     int64_t n = 0;
     while(dis(gen) > spr)
         n++;
-
+    
     if(!dcmp->read(rt)) return -1;
     AddrInt x;
     while(n--){

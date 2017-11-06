@@ -7,6 +7,7 @@ add_executable(USampleWSS USampleWSS.cpp)
 add_executable(RandomSampleWSS RandomSampleWSS.cpp)
 
 target_link_libraries(compressor lz4)
+target_link_libraries(sampler compressor)
 target_link_libraries(USampleWSS sampler boost_program_options compressor)
 target_link_libraries(RandomSampleWSS sampler boost_program_options compressor)
 
