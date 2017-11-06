@@ -41,10 +41,9 @@ int64_t SimpleRandomSampler::next(AddrInt &rt){
     int64_t n = 0;
     while(dis(gen) > spr)
         n++;
-    
     if(!dcmp->read(rt)) return -1;
     AddrInt x;
-    while(n--){
+    for(int64_t i = 0; i < n; i++){
         if(!dcmp->read(x)) return -1;
     }
     pos += n+1;

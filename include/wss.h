@@ -51,6 +51,7 @@ public:
         cmp->write(wss);
         cmp->write(num);
         cmp->write(nsampled);
+        //cout << wss << " " << num << " " << nsampled << endl;
     }
 
     void update_wss(AddrInt addr, int64_t pos){
