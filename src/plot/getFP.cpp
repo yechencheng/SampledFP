@@ -41,6 +41,6 @@ int main(int argc, char** argv){
         fp.update(wss, num, nsampled);
         assert(nsampled == ws);
     }
-    cout << fp.sum << " " << fp.nw << endl;
+    cout << fp.nw << "\t" << fp.sum << endl;
     return 0;
 }
