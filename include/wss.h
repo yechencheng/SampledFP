@@ -6,6 +6,7 @@
 #include <queue>
 #include <string>
 #include <fstream>
+#include <functional>
 
 #include "type.h"
 #include "compressor.h"
@@ -24,16 +25,23 @@ private:
     
     Compressor *cmp;
 public:
-    WSSCalculator(int64_t _ws, string fname){
+    function<void(int, int64_t, int)> process_ws_nsampled;
+
+    WSSCalculator(int64_t _ws, string fname = ""){
         ws = _ws;
         wss = 0;
         current_pos = 0;
-        cmp = new Compressor(fname);
-        cmp->write(ws);
+        cmp = NULL;
+        if(fname.length() != 0){
+            cmp = new Compressor(fname);
+            cmp->write(ws);
+        }
+        process_ws_nsampled = bind(&WSSCalculator::output_ws_nsampled, this, placeholders::_1, placeholders::_2, placeholders::_3);
     }
 
     void close(){
-        cmp->close();
+        if(cmp != NULL)
+            cmp->close();
     }
     ~WSSCalculator(){
         close();
@@ -76,7 +84,7 @@ public:
         
         while(suffix != 0 && step != 0){
             //output_ws(wss, step);
-            output_ws_nsampled(wss, step, q.size()-1);
+            process_ws_nsampled(wss, step, q.size()-1);
     
             if(step == prefix && prev_pos[q.front().first] == q.front().second){
                 wss--;
@@ -97,7 +105,7 @@ public:
                 wss++;
         }
         //output_ws(wss, 1);
-        output_ws_nsampled(wss, 1, q.size());
+        process_ws_nsampled(wss, 1, q.size());
         prev_pos[addr] = pos;
         current_pos++;
         if(prefix <= 1 && q.size() > 0){
