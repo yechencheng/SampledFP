@@ -1,31 +1,29 @@
 #include <iostream>
+#include <fstream>
+#include <map>
 #include <unordered_map>
-#include <cstdint>
-#include <cstdlib>
-#include <queue>
 
 #include <boost/program_options.hpp>
 
 #include "sampler.h"
-#include "type.h"
-#include "wss.h"
+#include "statistic.h"
+#include "compressor.h"
 
 using namespace std;
 using namespace boost::program_options;
 
+unordered_map<AddrInt, int64_t> cnt;
+map<int64_t, int64_t> feq;
+
 int main(int argc, char** argv){
-    int64_t ws;
-    double spr;
     string fname;
-    string outfile = "output";
+    double sr = 1.0;
 
     options_description desc{"Options"};
     desc.add_options()
         ("help,h", "This message")
         ("input,i", value<string>(&fname)->required(), "input trace file")
-        ("ws,w", value<int64_t>(&ws)->required(), "window size")
-        ("spr,s", value<double>(&spr)->required(), "sampling ratio")
-        ("output,o", value<string>(&outfile), "output file")
+        ("sr,s", value<double>(&sr), "sampling ratio")
     ;
     variables_map vm;
     store(parse_command_line(argc, argv, desc), vm);
@@ -34,18 +32,17 @@ int main(int argc, char** argv){
         return 1;
     }
     notify(vm);
-    
-    WSSCalculator wssc(ws, outfile);
-    SimpleRandomSampler rsamp(fname, spr);
-    AddrInt addr;
 
+    SimpleRandomSampler rsamp(fname, sr);
     int64_t pos;
+    AddrInt addr;
     while((pos = rsamp.next(addr)) != -1){
         addr >>= 6;
-        //if(cnt++ % 1000000 == 0) cout << cnt/1000000 << endl;
-        wssc.update_wss(addr, pos);
+        cnt[addr]++;
     }
-    wssc.close();
-
+    for(auto i : cnt)
+        feq[i.second]++;
+    for(auto i : feq)
+        cout << i.first << "\t" << i.second << endl;
     return 0;
 }
