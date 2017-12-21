@@ -51,8 +51,8 @@ int main(int argc, char** argv){
         dcmp.read(addr);
         cb.push_back(make_pair(pos, addr));
         
-        if(cb.size() <= y[0]+1) continue;
         for(auto i : y){
+            if(cb.size() < i+2) break;
             
         }
     }
