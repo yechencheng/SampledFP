@@ -47,14 +47,29 @@ int main(int argc, char** argv){
     int64_t pos;
     AddrInt addr;
     boost::circular_buffer<pair<int64_t,AddrInt>> cb(y.size()*2);
+    
+    vector<int64_t> wss(y.size(), 0);
+    vector<int64_t> cw(y.size(), 0);
+
     while(dcmp.read(pos)){
         dcmp.read(addr);
         cb.push_back(make_pair(pos, addr));
         
-        for(auto i : y){
-            if(cb.size() < i+2) break;
+        for(int i = 0; i < y.size(); i++){
+            if(cb.size() < y[i]+2) break;
+            int64_t tail_id = cb.size()-2;
+            int64_t head_id = cb.size()-y[i]-1;
+            if(cb[tail_id].first - cb[head_id].first >= x[i]) continue;
             
+            int64_t start_pos = max(cb[tail_id].first - x[i], cb[head_id-1].first+1);
+            int64_t end_pos = min(cb[tail_id+1].first-1, cb[head_id].first+x[i]);
+            int64_t nw = min(cb[head_id].first-start_pos+1, end_pos-cb[tail_id].first+1);
+            cw[i] += nw;
+            wss[i] += nw*;
         }
     }
+
+    for(int i = 0; i < y.size(); i++)
+        cout << y[i] << "\t" << cw[i] << "\t" << wss[i] << "\t" << wss[i]/(double)nw[i] << endl; 
     return 0;
 }
