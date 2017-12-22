@@ -18,6 +18,7 @@ vector<int64_t> GenerateYList(){
     //for(int64_t i = 65536; i < 786432; i += 512)
     for(int64_t i = 65536; i < 786432; i += 4096)
         rt.push_back(i);
+    //rt.push_back(65536);
     return rt;
 }
 
@@ -63,7 +64,8 @@ int main(int argc, char** argv){
     int64_t pos;
     AddrInt addr;
     boost::circular_buffer<pair<int64_t,AddrInt>> cb(y.back()+20);   //pos, addr
-    unordered_set<AddrInt> ndis;
+    vector<int64_t> fp(y.size(), 0);
+    unordered_map<AddrInt, int64_t> prev;
     
 
     vector<int64_t> wss(y.size(), 0);
@@ -72,26 +74,40 @@ int main(int argc, char** argv){
 
     while(dcmp.read(pos)){
         cnt++;
+        if(cnt % 100000 == 0) cout << cnt << endl;
+        //if(cnt  == 5000000) break;
+
         dcmp.read(addr);
         cb.push_back(make_pair(pos, addr));
 
-        for(int i = 0, j = cb.size()-2; i < y.size(); i++){
-            if(cb.size() < y[i]+2) break;
+        for(int i = 0; i < y.size(); i++){
             int64_t tail_id = cb.size()-2;
             int64_t head_id = cb.size()-y[i]-1;
-            while(j >= head_id)
-                ndis.insert(cb[j--].second);
             
-            if(cb[tail_id].first - cb[head_id].first >= x[i]) continue;
-            
-            //compute nwindow
-            int64_t start_pos = max(cb[tail_id].first - x[i] + 1, cb[head_id-1].first+1);
-            int64_t end_pos = min(cb[tail_id+1].first-1, cb[head_id].first+x[i]-1);
-            int64_t nw = min(cb[head_id].first-start_pos+1, end_pos-cb[tail_id].first+1);
-            cw[i] += nw;
-            wss[i] += nw*ndis.size();
+            if(head_id > 0 && cb[tail_id].first - cb[head_id].first < x[i]){
+                //compute nwindow
+                int64_t start_pos = max(cb[tail_id].first - x[i] + 1, cb[head_id-1].first+1);
+                int64_t end_pos = min(cb[tail_id+1].first-1, cb[head_id].first+x[i]-1);
+                int64_t nw = min(cb[head_id].first-start_pos+1, end_pos-cb[tail_id].first+1);
+                cw[i] += nw;
+                wss[i] += nw*fp[i];
+            }
+            if(head_id < 0) break;
+
+            //cout << prev[cb[head_id].second] << " " << cb[head_id].first << " " << fp[i] << endl;
+            if(prev[cb[head_id].second] == cb[head_id].first)
+                fp[i]--;
         }
-        ndis.clear();
+
+        int64_t dist = 10000000000000ll;
+        if(prev.find(addr) != prev.end())
+            dist = pos-prev[addr];
+        for(int i = 0; i < y.size(); i++){
+            if(x[i] >= dist) break;
+            fp[i]++;
+        }
+        
+        prev[addr] = pos;
     }
 
     for(int i = 0; i < y.size(); i++)
