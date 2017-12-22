@@ -89,8 +89,10 @@ int main(int argc, char** argv){
                 int64_t start_pos = max(cb[tail_id].first - x[i] + 1, cb[head_id-1].first+1);
                 int64_t end_pos = min(cb[tail_id+1].first-1, cb[head_id].first+x[i]-1);
                 int64_t nw = min(cb[head_id].first-start_pos+1, end_pos-cb[tail_id].first+1);
+                
                 cw[i] += nw;
                 wss[i] += nw*fp[i];
+                //cout << fp[i] << endl;
             }
             if(head_id < 0) break;
 
