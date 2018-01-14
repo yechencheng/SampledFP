@@ -43,13 +43,11 @@ public:
         x = _x;
         y = _y;
         cb = boost::circular_buffer<pair<int64_t,AddrInt>>(y+20);
-        cb.push_back(make_pair(0,0));
         wss = 0;
         cw = 0;
         fp = 0;
     }
     void OnReference(AddrInt addr, int64_t pos){
-        cout << addr << "\t" << pos << " " << fp << endl;
         cb.push_back(make_pair(pos, addr));
 
         int64_t tail_id = cb.size()-2;
@@ -63,14 +61,17 @@ public:
                 wss += nw*fp;
                 //cout << nw << " " << fp << endl;
         }
-        if(head_id > 0 && prev[cb[head_id].second] == cb[head_id].first)
+        if(head_id >= 0 && prev[cb[head_id].second] == cb[head_id].first)
                 fp--;
-        int64_t dist = 10000000000000ll;
-        if(prev.find(addr) != prev.end())
-            dist = pos-prev[addr];
-        if(dist >= x){
+
+        int64_t dist = -1;
+        if(head_id >= 0)
+            dist = cb[head_id].first;
+        if(prev.find(addr) == prev.end() || prev[addr] <= dist)
             fp++;
-        }
+
+        //cout << addr << "\t" << pos << " " << fp << " : " << head_id << " " << cb[head_id].first << " " << prev[cb[head_id].second] << endl;
+
         prev[addr] = pos;
     }
 
@@ -97,7 +98,7 @@ public:
     void OnReference(AddrInt addr, int64_t pos){
         cnt[addr]++;
         q.push(addr);
-        if(q.size() == y){
+        if(q.size() == y){            
             feq[cnt[addr]]++;
             AddrInt xaddr = q.front();
             cnt[xaddr]--;
@@ -239,6 +240,7 @@ int main(int argc, char** argv){
     //WindowFrequency wfeq(x,y);
     size_t nfeq = 0;
     int64_t step = 25*y;
+    //int64_t step = 1;
     vector<HeadFrequency> hfeqs;
     vector<WindowFrequency> wfeqs;
     vector<int64_t> nstep;
@@ -267,8 +269,8 @@ int main(int argc, char** argv){
     while(dcmp.read(pos)){
         cnty++;
         if(cnty % 5000000 == 0) cout << cnty << endl;
-        //if(cnty  == 800000000ll) break;
-        if(cnty == 30) return 0;
+        //if(cnty  == 50000ll) break;
+        //if(cnty == 30) return 0;
         dcmp.read(addr);
         //cout << pos << "\t" << addr << endl;
 
@@ -293,8 +295,8 @@ int main(int argc, char** argv){
     for(int i = 0; i < nfeq; i++){
         double fsum = 0;
         for(auto j : hfeqs[i].fratio){
-            hfr[i].push_back(make_pair(j.first/(double)nstep[i], j.second * j.first));
-            fsum += j.second * j.first;
+            hfr[i].push_back(make_pair(j.first, j.second));
+            fsum += j.second;
             //cout << j.first << "\t" << j.second << endl;
         }
         for(auto &j : hfr[i]){
@@ -307,7 +309,7 @@ int main(int argc, char** argv){
 
         fsum = 0;
         for(auto j : wfeqs[i].fratio){
-            wfr[i].push_back(make_pair(j.first/(double)nstep[i], j.second * j.first));
+            wfr[i].push_back(make_pair(j.first, j.second * j.first));
             fsum += j.second * j.first;
             //cout << j.first/(double)nstep[i] << "\t" << j.second << endl;
         }
@@ -322,23 +324,23 @@ int main(int argc, char** argv){
     int wfr_size = 2;
 
     pos = 0;
-    for(int64_t i = y+1; i < x; i++){
+    for(int64_t i = y+1; i <= x; i++){
         if(nstep[pos+1] <= i) pos++;
         hfr_size = hfr[pos].size();
         wfr_size = wfr[pos].size();
         //double tg = 0;
         for(int j = 0; j < hfr_size; j++){
-            if(hfr[pos][j].first*i >= i-1) continue;
+            if(hfr[pos][j].first >= i-1) continue;
             g += y/(double)i*pow((i-y)/(i-1),j)*hfr[pos][j].second;
             //tg += y/(double)i*pow((i-y)/(i-1),j)*hfr[pos][j].second;
         }
         //cout << i << "\t" << tg << endl;
         for(int j = 0; j < wfr_size; j++){
-            if(wfr[pos][j].first*i >= i-1) continue;
+            if(wfr[pos][j].first >= i-1) continue;
             s += y/(double)i*pow((i-y)/(i-1),j)*wfr[pos][j].second;
         }
         //if(i % 100000 == 0)
-        //    cout << g << "\t" << s << endl;
+        cout << g << "\t" << s << endl;
     }
     cout << "Predicted fp(y) : " << sfp.dfp-g+s << endl;
     cout << "s(x,y) : " << sfp.dfp << endl;
