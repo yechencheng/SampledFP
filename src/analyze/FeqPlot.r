@@ -6,20 +6,20 @@ require('reshape')
 args = commandArgs(trailingOnly = T)
 
 dat = read.table(args[1], header=F)
+output = args[2]
+
 colnames(dat) = c("feq", "count")
 
-sr = as.numeric(args[2])
-
-dat$feq = as.integer(dat$feq / (as.integer(sr/0.01)))
-dat = dat[which(dat$feq > 10 & dat$feq < 750), ]
+dat = dat[which(dat$feq > 10), ]
 
 scount = sum(dat$count) * 1.0
-dat$count = dat$count / scount * 100.0
-
+dat$count = dat$count / scount
 
 dat = aggregate(. ~ feq, dat, sum)
 
 plot = ggplot(dat)+
-  geom_bar(stat="identity", aes(feq, count))
+  geom_bar(stat="identity", aes(feq, count))+
+  scale_y_continuous(labels = scales::percent)+
+  labs(x = "Frequency", y="Ratio")
 
-plot
+ggsave(output)
