@@ -239,13 +239,13 @@ int main(int argc, char** argv){
     //HeadFrequency hfeq(x,y);
     //WindowFrequency wfeq(x,y);
     size_t nfeq = 0;
-    int64_t step = 25*y;
+    int64_t step = 20*y;
     //int64_t step = 1;
     vector<HeadFrequency> hfeqs;
     vector<WindowFrequency> wfeqs;
     vector<int64_t> nstep;
 
-    for(int64_t i = y; i < x; i += step){
+    for(int64_t i = y; i < 12*y; i += step){
         nfeq++;
         hfeqs.push_back(HeadFrequency(x,i));
         wfeqs.push_back(WindowFrequency(x,i));
@@ -268,7 +268,7 @@ int main(int argc, char** argv){
     
     while(dcmp.read(pos)){
         cnty++;
-        if(cnty % 5000000 == 0) cout << cnty << endl;
+        //if(cnty % 5000000 == 0) cout << cnty << endl;
         //if(cnty  == 50000ll) break;
         //if(cnty == 30) return 0;
         dcmp.read(addr);
@@ -324,28 +324,50 @@ int main(int argc, char** argv){
     int wfr_size = 2;
 
     pos = 0;
-    for(int64_t i = y+1; i <= x; i++){
-        if(nstep[pos+1] <= i) pos++;
+    for(int64_t i = y+1; i < 10*y; i++){
+        if(nstep[pos+1] <= i) {pos++;}
         hfr_size = hfr[pos].size();
         wfr_size = wfr[pos].size();
+        int hpos = pos;
+        int wpos = pos;
         //double tg = 0;
         for(int j = 0; j < hfr_size; j++){
-            if(hfr[pos][j].first >= i-1) continue;
-            g += y/(double)i*pow((i-y)/(i-1),j)*hfr[pos][j].second;
+            if(hfr[hpos][j].first > i-y+1) continue;
+            g += y/(double)i*pow((i-y)/(i-1),j)*hfr[hpos][j].second;
             //tg += y/(double)i*pow((i-y)/(i-1),j)*hfr[pos][j].second;
         }
         //cout << i << "\t" << tg << endl;
         for(int j = 0; j < wfr_size; j++){
-            if(wfr[pos][j].first >= i-1) continue;
-            s += y/(double)i*pow((i-y)/(i-1),j)*wfr[pos][j].second;
+            if(wfr[wpos][j].first > i-y+1) continue;
+            s += y/(double)i*pow((i-y)/(i-1),j)*wfr[wpos][j].second;
         }
-        //if(i % 100000 == 0)
-        cout << g << "\t" << s << endl;
+        if(i % 100000 == 0)
+            cout << g << "\t" << s << endl;
     }
-    cout << "Predicted fp(y) : " << sfp.dfp-g+s << endl;
+
+    double delta = 0;
+    for(int64_t i = 10*y; i < 12*y; i++){
+        if(nstep[pos+1] <= i) {pos++;}
+        hfr_size = hfr[pos].size();
+        wfr_size = wfr[pos].size();
+        int hpos = pos;
+        int wpos = pos;
+        for(int j = 0; j < hfr_size; j++){
+            if(hfr[hpos][j].first > i-y+1) continue;
+            delta += y/(double)i*pow((i-y)/(i-1),j)*hfr[hpos][j].second;
+        }
+        for(int j = 0; j < wfr_size; j++){
+            if(wfr[wpos][j].first > i-y+1) continue;
+            delta -= y/(double)i*pow((i-y)/(i-1),j)*wfr[wpos][j].second;
+        }
+    }
+
+    delta = 100;
+    cout << "Predicted fp(y) : " << sfp.dfp-g+s-delta*(x-10*y)/(2*y) << endl;
     cout << "s(x,y) : " << sfp.dfp << endl;
     cout << "g(x,y) : " << g << endl;
     cout << "s(x,y)-s(x,y-1) : " << s << endl;
     cout << "g-s : " << g-s << endl;
+    cout << "delta : " << delta << endl;
     return 0;
 }
