@@ -229,23 +229,23 @@ int main(int argc, char** argv){
     notify(vm);
 
     Decompressor dcmp(fname);
-    double sr;
+    double sr=1.0;
     dcmp.read(sr);
     double x = y/sr;
-
+    cout << "x,y = " << x << " " << y << endl;
     int64_t pos;
     AddrInt addr;
     SampledFootprint sfp(x,y);
     //HeadFrequency hfeq(x,y);
     //WindowFrequency wfeq(x,y);
     size_t nfeq = 0;
-    int64_t step = 20*y;
+    int64_t step = 10*y;
     //int64_t step = 1;
     vector<HeadFrequency> hfeqs;
     vector<WindowFrequency> wfeqs;
     vector<int64_t> nstep;
 
-    for(int64_t i = y; i < 12*y; i += step){
+    for(int64_t i = y; i < 25*y; i += step){
         nfeq++;
         hfeqs.push_back(HeadFrequency(x,i));
         wfeqs.push_back(WindowFrequency(x,i));
@@ -276,13 +276,13 @@ int main(int argc, char** argv){
 
         //Compute S(X,Y)
         sfp.OnReference(addr,pos);
-        for(int i = 0; i < nfeq; i++){
+        for(size_t i = 0; i < nfeq; i++){
             hfeqs[i].OnReference(addr,pos);
             wfeqs[i].OnReference(addr,pos);
         }
     }
     sfp.Finalize();
-    for(int i = 0; i < nfeq; i++){
+    for(size_t i = 0; i < nfeq; i++){
         hfeqs[i].Finalize();
         wfeqs[i].Finalize();
     }
@@ -292,7 +292,7 @@ int main(int argc, char** argv){
 
     vector<pair<double,double>> hfr[nfeq];
     vector<pair<double,double>> wfr[nfeq];
-    for(int i = 0; i < nfeq; i++){
+    for(size_t i = 0; i < nfeq; i++){
         double fsum = 0;
         for(auto j : hfeqs[i].fratio){
             hfr[i].push_back(make_pair(j.first, j.second));
@@ -301,11 +301,10 @@ int main(int argc, char** argv){
         }
         for(auto &j : hfr[i]){
             j.second /= fsum;
-            cout << j.first << "\t" << j.second << endl;
+            //cout << j.first << "\t" << j.second << endl;
         }
 
-        cout << "=================================================================" << endl;
-
+        //cout << "=================================================================" << endl;
 
         fsum = 0;
         for(auto j : wfeqs[i].fratio){
@@ -315,9 +314,9 @@ int main(int argc, char** argv){
         }
         for(auto &j : wfr[i]){
             j.second /= fsum;
-            cout << j.first << "\t" << j.second << endl;
+            //cout << j.first << "\t" << j.second << endl;
         }
-        cout << "****************************************************************" << endl;
+        //cout << "****************************************************************" << endl;
     }
     
     int hfr_size = 2;
@@ -341,12 +340,12 @@ int main(int argc, char** argv){
             if(wfr[wpos][j].first > i-y+1) continue;
             s += y/(double)i*pow((i-y)/(i-1),j)*wfr[wpos][j].second;
         }
-        if(i % 100000 == 0)
-            cout << g << "\t" << s << endl;
+        //if(i % 100000 == 0)
+            //cout << g << "\t" << s << endl;
     }
 
     double delta = 0;
-    for(int64_t i = 10*y; i < 12*y; i++){
+    for(int64_t i = 10*y; i < 20*y; i++){
         if(nstep[pos+1] <= i) {pos++;}
         hfr_size = hfr[pos].size();
         wfr_size = wfr[pos].size();
@@ -362,12 +361,20 @@ int main(int argc, char** argv){
         }
     }
 
-    delta = 100;
-    cout << "Predicted fp(y) : " << sfp.dfp-g+s-delta*(x-10*y)/(2*y) << endl;
+    //delta = 100;
+    double sdelta = delta*(x-10*y)/(20*y);
+    sdelta = delta;
+    cout << "Predicted fp(y) : " << sfp.dfp-g+s-sdelta << endl;
     cout << "s(x,y) : " << sfp.dfp << endl;
+    
+    cout << "g-s : " << g-s << endl;
+    cout << "sdelta : " << sdelta << endl;
+    
     cout << "g(x,y) : " << g << endl;
     cout << "s(x,y)-s(x,y-1) : " << s << endl;
-    cout << "g-s : " << g-s << endl;
     cout << "delta : " << delta << endl;
+
+    cout << endl;
+    
     return 0;
 }

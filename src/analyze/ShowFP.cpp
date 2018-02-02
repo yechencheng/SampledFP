@@ -5,6 +5,7 @@
 using namespace std;
 
 int main(int argc, char** argv){
+    cout << "usage : command fp_file" << endl;
     FPDist &fp = *(FPDist::deserialize(argv[1]));
     auto xval = fp.FPHist.GetXValues();
     auto yval = fp.FPHist.GetYValues();

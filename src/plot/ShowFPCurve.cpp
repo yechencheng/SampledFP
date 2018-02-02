@@ -9,7 +9,7 @@ int main(int argc, char** argv){
     auto xval = fp.FPHist.GetXValues();
     auto yval = fp.FPHist.GetYValues();
     
-    for(int i = 0; i < xval.size(); i++)
+    for(size_t i = 0; i < xval.size(); i++)
         cout << xval[i] << "\t" << yval[i] << endl;
     return 0;
 }

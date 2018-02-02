@@ -33,8 +33,8 @@ int main(int argc, char** argv){
     cout << "WS : " << ws << endl;
     Footprint fp(ws);
     int wss;
-    int64_t num;
-    int nsampled;
+    int64_t num = 0;
+    int nsampled = 0;
     while(dcmp.read(wss)){
         dcmp.read(num);
         dcmp.read(nsampled);

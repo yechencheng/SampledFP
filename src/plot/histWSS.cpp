@@ -29,13 +29,13 @@ int main(int argc, char** argv){
 
     Decompressor dcmp(fname);
 
-    int64_t ws;
+    int64_t ws = 0;
     dcmp.read(ws);
     CountWindow cw(ws);
 
     int wss;
-    int64_t num;
-    int nsampled;
+    int64_t num = 0;
+    int nsampled = 0;
     while(dcmp.read(wss)){
         dcmp.read(num);
         dcmp.read(nsampled);

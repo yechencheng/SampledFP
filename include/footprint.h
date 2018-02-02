@@ -276,7 +276,7 @@ FPDist* PreciseFPBuilder<HistType>::Finalize(){
 
         FPHist[W[i]] = (fp/(double)(naccess-W[i]+1));
     }
-    for(int i = 0; i < W.size()-1; i++)
+    for(size_t i = 0; i < W.size()-1; i++)
         rthist[W[i]] -= rthist[W[i+1]];
     return ComposeFPDist();
 }
