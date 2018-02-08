@@ -33,6 +33,9 @@ int main(int argc, char** argv){
         return 1;
     }
     notify(vm);
+    
+    WindowFrequency wf(w,w);
+    HeadFrequency hf(w,w);
 
     UniformSampler usamp(fname, 1);
     queue<AddrInt> q;
@@ -44,23 +47,15 @@ int main(int argc, char** argv){
     unordered_map<AddrInt, int64_t> cnt;
     while((pos = usamp.next(addr)) != -1){
         addr >>= 6;
-        q.push(addr);
-        cnt[addr]++;
-        if(q.size() != w){
-            continue;
-        }
-        feq[cnt[addr]]++;
-        AddrInt x = q.front();
-        q.pop();
-        cnt[x]--;        
+        hf.OnReference(addr, pos);
+        wf.OnReference(addr, pos);
     }
+    hf.Finalize();
+    wf.Finalize();
+
+    hf.output();
+    cout << string(20,'=') << endl;
+    wf.output();
     
-    vector<pair<int64_t, int64_t>> rt;
-    for(auto i : feq)
-        rt.push_back(i);
-    sort(rt.begin(), rt.end());
-    for(auto i : rt){
-        cout << i.first << "\t" << i.second << endl;
-    }
     return 0;
 }

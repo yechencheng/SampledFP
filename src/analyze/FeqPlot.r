@@ -6,13 +6,19 @@ require('reshape')
 args = commandArgs(trailingOnly = T)
 
 dat = read.table(args[1], header=F)
-output = args[2]
+
+output = "output.pdf"
+if(length(args) >= 2)
+  output = args[2]
+
+caption = ""
+if(length(args) >= 3)
+  caption = args[3]
 
 colnames(dat) = c("feq", "count")
 
-dat = dat[which(dat$feq > 10), ]
-
-scount = sum(dat$count) * 1.0
+#dat = dat[which(dat$feq > 10), ]
+scount = sum(as.numeric(dat$count)) * 1.0
 dat$count = dat$count / scount
 
 dat = aggregate(. ~ feq, dat, sum)
